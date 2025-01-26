@@ -20,7 +20,7 @@
 
 ## Used programs 
 
-- [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 0.12.0  -- quality reports for raw reads
+- [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 0.12.0 and [MultiQC](https://github.com/MultiQC/MultiQC) v1.14 -- quality reports for raw reads
 - [STAR](https://github.com/alexdobin/STAR) 2.7.11a -- Spliced Transcripts Alignment to a genome Reference
 - [Subread](https://github.com/ShiLab-Bioinformatics/subread) 2.0.6 -- for processing next-gen sequencing data with featureCounts read summarization program
 
