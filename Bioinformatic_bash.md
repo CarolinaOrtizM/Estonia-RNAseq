@@ -113,5 +113,5 @@ I downloaded the count.out table and organized it in Excel with my sample names:
 Cold_S1	Cold_S2	Cold_S3	Cold_S4_ Moderate_S5 Moderate_S6 Moderate_S7 Moderate_S8 Warm_S9 Warm_S10 Warm_S11 Warm_S12
 and save it as .csv
 
-For the next
+For the next steps, see the DESq_analysis.R file
 
