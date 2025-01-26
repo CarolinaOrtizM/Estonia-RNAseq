@@ -3,12 +3,15 @@
 ## List of files 
 
 1. Bioinformatic_bash.md -- script for sequence data processing.
-2. CountTable.csv -- gene counts output from STAR and FeatureCounts
-3. SampleFile.txt -- information about the samples, including the replicates
-4. Sequences_names.xlsx - information about the names of the sequences submitted to NCBI
-5. Deseq_analysis.R --
-6. GO_analysis.R --
-7. KEGG.R --
-8. Survival model --
-9. Fat content model --
-10. Fatty acid analysis --
+2. CountTable.csv -- gene counts output from STAR and FeatureCounts (Subread).
+3. SampleFile.txt -- information about the samples, including the replicates and samples submitted to NCBI.
+5. Deseq_analysis.R -- Script for the differential expression analysis
+6. Deseq_results_MvC.csv --results moderate vs cold
+7. Deseq_results_MvW.csv --results moderate vs warm
+9. Deseq_results_CvW.csv -- results cold vs warm
+10. GO_analysis.R -- Gene Ontology analysis 
+11. KEGG.R -- Kyoto Encyclopedia of genes and genomes pathway analysis
+12. AllEggSacsdata.csv -- data for survival and fat content 
+13. Survival_Fat_models.R -- scripts survival proportion and fat content models
+14. FA_results.csv -- Fatty acids per sample 
+15. Fatty acid analysis.R -- Script for fatty acid analysis
