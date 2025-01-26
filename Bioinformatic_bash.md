@@ -73,8 +73,11 @@ weget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/947/563/725/GCF_947563725.1_q
 weget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/947/563/725/GCA_947563725.1_qqArgBrue1.1/GCF_947563725.1_qqArgBrue1.1_genomic.fna.gz
 ```
 10. Unzip the files by gunzip *.gz
-11. change the .fna file to fa by cp GCF_947563725.1_qqArgBrue1.1_genomic.fna GCF_947563725.1_qqArgBrue1.1_genomic.fa
-12. make a new directory to keep stuff organized for star: mkdir ref
+11. change the .fna file to fa by
+```
+cp GCF_947563725.1_qqArgBrue1.1_genomic.fna GCF_947563725.1_qqArgBrue1.1_genomic.fa
+```
+13. make a new directory to keep stuff organized for star: mkdir ref
 ```
 STAR --runMode genomeGenerate --genomeDir ref/ --genomeFastaFiles GCF_947563725.1_qqArgBrue1.1_genomic.fa --sjdbGTFfile GCF_947563725.1_qqArgBrue1.1_genomic.gtf --runThreadN 16
 ```
