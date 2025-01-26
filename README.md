@@ -2,9 +2,10 @@
 
 ## List of files 
 
-1. Bioinformatic_bash.md -- script for sequence data processing from raw reads to count table. 
-2. CountTable.csv -- gene counts output from STAR and FeatureCounts (Subread).
-3. SampleFile.txt -- information about the samples, including the replicates and samples submitted to NCBI.
+1. Bioinformatic_bash.md -- script for sequence data processing from raw reads to count table.
+2. Multiqc_report.html -- MultiQC report on the quality of merged reads
+3. CountTable.csv -- gene counts output from STAR and FeatureCounts (Subread).
+4. SampleFile.txt -- information about the samples, including the replicates and samples submitted to NCBI.
 5. DESeq_analysis.R -- Script for the differential expression analysis
 6. GO_analysis.R -- Gene Ontology analysis
 7. GO_analysis_combined_results.csv -- all GO found for the differential expressed genes
@@ -39,6 +40,8 @@
 flowchart TB
     A@{shape: procs, label: "Illumina raw reads"}--> B([merged lanes]);
     A--> Fa([FastQC]);
+    Fa -->Mu([MultiQC]);
+    Mu-->L@{shape: procs, label: "Multiqc_report.html"};
     B --> C@{shape: procs, label: "Merged reads (NCBI: GSE287559)"};
     C --> Fa;
     C--> D([STAR]);
