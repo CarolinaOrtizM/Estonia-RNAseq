@@ -10,7 +10,9 @@
 7. GO_analysis_combined_results.csv -- all GO found for the differential expressed genes
 8. KEGG.R -- Kyoto Encyclopedia of genes and genomes pathway analysis
 9. KEGGresults.csv -- all KEGG found for the differential expressed genes
-10. AllEggSacsdata.csv -- data for survival and fat content 
-11. Survival_Fat_models.R -- scripts survival proportion and fat content models
-12. FA_results.csv -- Fatty acids per sample 
-13. FA_analysis.R -- Script for fatty acid analysis 
+10. SruvivalAllEggSacs.csv -- data for survival proportion of all egg sacs
+11. Survival_model.R -- script survival proportion
+12. FatContent.csv -- data for fat content
+13. FatContent_model.R -- script for fat content 
+14. FA_results.csv -- Fatty acids per sample 
+15. FA_analysis.R -- Script for fatty acid analysis 
