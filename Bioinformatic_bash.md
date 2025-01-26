@@ -21,7 +21,7 @@ cat "$i"_L00*_R2_001.fastq.gz > "$i"_R2.merged.fq.gz
 
 done;
 ```
-# 2. FASTQC of raw reads 
+# 2. FASTQC of merged reads 
 
 ```
 #!/usr/bin/env bash
@@ -52,10 +52,14 @@ fastqc \
   ~/Ilumina_raw/Alignment_1/fastq1/Fastq/S334_S12_R1.merged.fq.gz \
   ~/Ilumina_raw/Alignment_1/fastq1/Fastq/S334_S12_R2.merged.fq.gz
  ```
+Then I used MultiQC 1.25.1  
+```
+multiqc .
+```
 # 3. Genome Alignment with STAR 2.7.11a 
 ### Generate genome indices: 
 Download the genome fasta file: .fna and the genome annotation file .GTF
-1. I went into https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_947563725.1/
+1. In https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_947563725.1/
 2. NCBI RefSeq assembly GCF_947563725.1 --> click on actions --> see more files on FTP
 3. right click on  GCF_947563725.1_qqArgBrue1.1_genomic.gtf.gz--> copy link address
 4. go to the terminal --> in the folder StarAlignment -->
