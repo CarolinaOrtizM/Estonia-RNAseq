@@ -24,7 +24,7 @@ STAR 2.7.11a -- Spliced Transcripts Alignment to a Reference
 Subread 2.0.6 -- for processing next-gen sequencing data with featureCounts read summarization program
 
 ### R packages 
-DESq2 1.38.3 -- Normalization of read counts and DGE analysis
+[DESq2](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) 1.38.3 -- Normalization of read counts and DGE analysis
 topGO 2.56.0 -- Enrichment Analysis for Gene Ontology
 clusterProfiler 4.10.0 -- exploring functional characteristics of both coding and non-coding genomics data for thousands of species with up-to-date gene annotation
 ComplexHeatmap 2.22.0 -- Creates complex heatmaps efficiently to visualize associations between different sources of data sets and reveal potential patterns.
