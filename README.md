@@ -2,7 +2,7 @@
 
 ## List of files 
 
-1. Bioinformatic_bash.md -- script for sequence data processing.
+1. Bioinformatic_bash.md -- script for sequence data processing from raw reads to count table. 
 2. CountTable.csv -- gene counts output from STAR and FeatureCounts (Subread).
 3. SampleFile.txt -- information about the samples, including the replicates and samples submitted to NCBI.
 5. Deseq_analysis.R -- Script for the differential expression analysis
