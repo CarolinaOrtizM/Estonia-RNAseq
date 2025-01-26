@@ -1,0 +1,13 @@
+Cold	cold_1_rep1	S324_S1_R1.merged.fq.gz     	S323_S1_R2.merged.fq.gz
+Cold	cold_2_rep2	S324_S2_R1.merged.fq.gz	        S324_S2_R2.merged.fq.gz
+Cold	cold_3_rep3	S325_S3_R1.merged.fq.gz	        S325_S3_R2.merged.fq.gz 
+Cold	cold_4_rep4	S326_S4_R1.merged.fq.gz	        S326_S4_R2.merged.fq.gz
+Moderate	moderate_1_rep1	S327_S5_R1.merged.fq.gz	S327_S5_R2.merged.fq.gz
+Moderate	moderate_2_rep2	S328_S6_R1.merged.fq.gz	S328_S6_R2.merged.fq.gz
+Moderate	moderate_3_rep3	S329_S7_R1.merged.fq.gz	S329_S7_R2.merged.fq.gz 
+Moderate	moderate_4_rep4	S330_S8_R1.merged.fq.gz	S330_S8_R2.merged.fq.gz
+Warm	warm_1_rep1	S331_S9_R1.merged.fq.gz	        S331_S9_R2.merged.fq.gz
+Warm	warm_2_rep2	S332_S10_R1.merged.fq.gz	    S332_S10_R2.merged.fq.gz
+Warm	warm_3_rep3	S333_S11_R1.merged.fq.gz	    S333_S11_R2.merged.fq.gz 
+Warm	warm_4_rep4	S334_S12_R1.merged.fq.gz	    S334_S12_R2.merged.fq.gz
+
