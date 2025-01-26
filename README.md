@@ -19,9 +19,9 @@
 
 ## Used programs 
 
-FastQC v0.12.0  -- quality reports for raw reads
-STAR 2.7.11a -- Spliced Transcripts Alignment to a Reference
-Subread 2.0.6 -- for processing next-gen sequencing data with featureCounts read summarization program
+[FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 0.12.0  -- quality reports for raw reads
+[STAR](https://github.com/alexdobin/STAR) 2.7.11a -- Spliced Transcripts Alignment to a Reference
+[Subread](https://github.com/ShiLab-Bioinformatics/subread) 2.0.6 -- for processing next-gen sequencing data with featureCounts read summarization program
 
 ### R packages 
 [DESq2](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) 1.38.3 -- Normalization of read counts and DGE analysis
