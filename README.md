@@ -27,7 +27,7 @@
 ### R packages 
 - [DESq2](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) 1.38.3 -- Normalization of read counts and DGE analysis
 - [topGO](https://bioconductor.org/packages/release/bioc/html/topGO.html) 2.56.0 -- Enrichment Analysis for Gene Ontology
-- [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) 4.10.0 -- exploring functional characteristics of both coding and non-coding genomics data for thousands of species with up-to-date gene annotation
+- [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) 4.10.0 -- Exploring functional characteristics of coding genomics data for the annotated genome.
 - [ComplexHeatmap](https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html) 2.22.0 -- Creates complex heatmaps efficiently to visualize associations between different sources of data sets and reveal potential patterns.
 - [VennDiagram](https://cran.r-project.org/web/packages/VennDiagram/index.html) 1.7.3 --  calculate and plot high-resolution Venn and Euler plots
 - [glmmTMB](https://cran.r-project.org/web/packages/glmmTMB/index.html) 1.1.10 -- Generalized Linear Mixed Models using Template Model Builder, using maximum likelihood estimation. 
