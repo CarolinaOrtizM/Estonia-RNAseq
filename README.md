@@ -8,9 +8,9 @@
 4. SampleFile.txt -- information about the samples, including the replicates and samples submitted to NCBI.
 5. DESeq_analysis.R -- Script for the differential expression analysis
 6. GO_analysis.R -- Gene Ontology analysis
-7. GO_analysis_combined_results.csv -- all GO found for the differential expressed genes
+7. GO_analysis_combined_results.csv -- all GO found for the differentially expressed genes
 8. KEGG.R -- Kyoto Encyclopedia of genes and genomes pathway analysis
-9. KEGGresults.csv -- all KEGG found for the differential expressed genes
+9. KEGGresults.csv -- all KEGG found for the differentially expressed genes
 10. SruvivalAllEggSacs.csv -- data for survival proportion of all egg sacs
 11. Survival_model.R -- script survival proportion
 12. FatContent.csv -- data for fat content
