@@ -12,75 +12,59 @@ library(enrichplot)
 library(ComplexHeatmap)
 library(circlize) 
 
+#KEGG analysis 
+##########Cold vs moderate DEGs (df_sigs1)#############
+
+rm(list=ls(all=TRUE)); # graphics.off()
+
 ####data (DGE)
 # Function to strip 'LOC' prefix from IDs
 strip_loc_prefix <- function(ids) {
   return(sub("LOC", "", ids))
 }
 
+df_sigs1 <- as_tibble(df_sigs1, rownames = "ID")
+
 # Strip 'LOC' prefix from gene IDs in the results
-cold_results$Gene_id <- strip_loc_prefix(cold_results$Gene_id)
-moderate_results$Gene_id <- strip_loc_prefix(moderate_results$Gene_id)
-warm_results$Gene_id <- strip_loc_prefix(warm_results$Gene_id)
+df_sigs1$ID <- strip_loc_prefix(df_sigs1$ID )
 
-# Combine all genes into a universe
-gene_universe <- unique(c(cold_results, moderate_results, warm_results))
 
-# Verify the gene universe
-print(head(gene_universe))
-str(gene_universe)
-
-# Extract gene IDs from the specified sublist positions
-gene_ids_list <- lapply(gene_universe[c(1, 8, 15)], unlist)
-
-# Flatten the list and make it unique to get rid of duplicates
-gene_ids <- unique(unlist(gene_ids_list))
-head(gene_ids)
+gene_ids1 <- unique(unlist(df_sigs1))
+head(gene_ids1)
 
 # Perform KEGG enrichment analysis
-tryCatch({
-  kk <- enrichKEGG(gene = gene_ids,
+
+kk1 <- enrichKEGG(gene = gene_ids1,
                    organism = 'abru',
                    keyType = "kegg",
                    pAdjustMethod = "BH",
                    qvalueCutoff = 0.05)
-}, error = function(e) {
-  cat("Error in enrichKEGG: ", e$message, "\n")
-})
 
-# Check the structure of kk to see if there are any anomalies
-str(kk@result)
+# Check the structure of kk again to see if there are any anomalies
+str(kk1@result)
 
-# Convert relevant columns to numeric where necessary
-kk@result$GeneRatioCount <- as.numeric(sapply(strsplit(kk@result$GeneRatio, "/"), `[`, 1))
-kk@result$BgRatioCount <- as.numeric(sapply(strsplit(kk@result$BgRatio, "/"), `[`, 1))
+# Convert relevant columns to numeric 
+kk1@result$GeneRatioCount <- as.numeric(sapply(strsplit(kk1@result$GeneRatio, "/"), `[`, 1))
+kk1@result$BgRatioCount <- as.numeric(sapply(strsplit(kk1@result$BgRatio, "/"), `[`, 1))
 
 # only kk@result as a data frame 
-data <- as.data.frame(kk@result)
-write.csv(data, file =  "KKresukts.csv")
+data1 <- as.data.frame(kk1@result)
+write.csv(data1, file =  "KKresuktsCold_mode.csv")
+  
+####Plotting
+filtered_data1 <- data1 %>%
+filter(pvalue < 0.05)  # Adjust this value based on your desired threshold
 
-##### Option 1: Selecting the top 40 most significant pathways
-top_data <- data %>% 
-  arrange(p.adjust) %>%  # Sort by p.adjust to get the most significant results
-  head(40)  # Select the top 40
-
-##### Option 2: Filtering by a p-adjust threshold
-#filtered_data <- data %>%
-  #filter(p.adjust < 0.05)  # Adjust this value based on your desired threshold
-
-# Proceed with plotting using either 'top_data' or 'filtered_data'
-plot_data <- top_data  # or filtered_data
-#plot_data <- filtered_data #doesn't work...
-
+plot_data1 <- filtered_data1 
 
 # Remove the repetitive part from the Description
-plot_data <- plot_data %>%
+plot_data1 <- plot_data1 %>%
   mutate(Description = gsub(" - Argiope bruennichi \\(wasp spider\\)", "", Description))
 
-# Recreate the plot with updated descriptions
-ggplot(plot_data, aes(x = reorder(Description, p.adjust), y = -log10(pvalue))) +
-  geom_point(aes(size = Count, color = p.adjust), alpha = 0.6) +
-  labs(x = "Pathway Description", y = "-log10(P-value)", title = "Top 40 KEGG Pathway Enrichment Analysis",
+### Dot plot #########
+ggplot(plot_data1, aes(x = reorder(Description, pvalue), y = -log10(pvalue))) +
+  geom_point(aes(size = Count, color = pvalue), alpha = 0.6) +
+  labs(x = "Pathway Description", y = "-log10(P-value)", title = "KEGG Pathway Enrichment Analysis Cold",
        subtitle = "Size of points corresponds to number of genes in the pathway") +
   scale_color_gradient(low = "green", high = "red") +
   theme_minimal() +
@@ -88,134 +72,223 @@ ggplot(plot_data, aes(x = reorder(Description, p.adjust), y = -log10(pvalue))) +
         plot.title = element_text(size = 14, face = "bold"),
         plot.subtitle = element_text(size = 12)) +
   guides(size = guide_legend(title = "Gene Count"))
-ggsave("KEGG_all_top40.tiff", width=8, height=10) ##for saving it 
 
-########## for the DGE data ### to know which treatment accounts for which pathway
+###Bar plot #####
+ggplot(plot_data1, aes(x = reorder(Description, Count), y = Count, fill = category)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black",size = 0.5)+
+  coord_flip() +  # Horizontal bars
+  labs(x = NULL, 
+       y = "Number of DEGs in each pathway", 
+       title = "") +
+  geom_text(aes(label = Count), hjust = -0.2, size = 5) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 12, color = "black",face = "bold"),
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.line.y = element_blank(),  # Remove Y-axis line
+        axis.ticks.y = element_blank(),  # Remove Y-axis ticks (optional)
+        legend.position = "right",
+        legend.title = element_blank(),
+        plot.margin = margin(5, 10, 5, 5)) +
+  scale_fill_manual(values = c("Metabolism" = "#1A5555", 
+                               "Genetic Information Processing" = "green",
+                               "Cellular Processes" = "#00FFFF")) +
+  scale_y_continuous(
+    limits = c(0, 30),        # Hard stop at 0 and 6
+    expand = c(0, 0),        # No padding
+    breaks = seq(0, 30, by = 5)
+  )
 
-# Example structure, adjust according to your actual data structure and names
-cold_genes <- data.frame(geneID = gene_universe[[1]], logFC = gene_universe[[3]], pvalue = gene_universe[[6]], condition = "cold")
-moderate_genes <- data.frame(geneID = gene_universe[[8]], logFC = gene_universe[[10]], pvalue = gene_universe[[14]], condition = "moderate")
-warm_genes <- data.frame(geneID = gene_universe[[15]], logFC = gene_universe[[17]], pvalue = gene_universe[[20]], condition = "warm")
+########Warm vs moderate DEGs (df_sigs2)############
+####data (DGE)
+# Function to strip 'LOC' prefix from IDs
+strip_loc_prefix <- function(ids) {
+  return(sub("LOC", "", ids))
+}
 
-# Combine into one data frame
-combined_genes <- rbind(cold_genes, moderate_genes, warm_genes)
+df_sigs2 <- as_tibble(df_sigs2, rownames = "ID")
 
-# 'kk' is the KEGG enrichment result and 'kk@result$geneID' contains gene IDs separated by '/'
-enriched_genes <- strsplit(as.character(kk@result$geneID), "/")
+# Strip 'LOC' prefix from gene IDs in the results
+df_sigs2$ID <- strip_loc_prefix(df_sigs2$ID )
 
-# Map each list of genes to the corresponding pathway description
-pathway_genes <- setNames(enriched_genes, kk@result$Description)
+#gene list 
+gene_ids2 <- unique(unlist(df_sigs2))
+head(gene_ids2)
 
-# Function to find conditions associated with each gene in a pathway
-pathway_conditions <- lapply(pathway_genes, function(gene_list) {
-  gene_data <- combined_genes[combined_genes$geneID %in% gene_list, ]
-  return(gene_data)
-})
+# Perform KEGG enrichment analysis
 
-# Optionally, create a summary of conditions for each pathway
-pathway_summary <- lapply(pathway_conditions, function(df) {
-  if (nrow(df) > 0) {
-    return(table(df$condition))
-  } else {
-    return(NULL)
-  }
-})
+kk2 <- enrichKEGG(gene = gene_ids2,
+                  organism = 'abru',
+                  keyType = "kegg",
+                  pAdjustMethod = "BH",
+                  qvalueCutoff = 0.05)
 
-head(pathway_summary)
-str(pathway_summary)
+# Check the structure of kk again to see if there are any anomalies
+str(kk2@result)
 
-write.csv(final_df, file ="Pathways_conditions_numbers.csv") 
+# Convert relevant columns to numeric 
+kk2@result$GeneRatioCount <- as.numeric(sapply(strsplit(kk2@result$GeneRatio, "/"), `[`, 1))
+kk2@result$BgRatioCount <- as.numeric(sapply(strsplit(kk2@result$BgRatio, "/"), `[`, 1))
 
-# Save each pathway's gene condition data to a separate CSV file
-lapply(names(pathway_conditions), function(pathway) {
-  if (!is.null(pathway_conditions[[pathway]])) {
-    write.csv(pathway_conditions[[pathway]], sprintf("%s.csv", gsub("/", "_", pathway)), row.names = FALSE)
-  }
-})
+# only kk@result as a data frame 
+data2 <- as.data.frame(kk2@result)
+write.csv(data2, file =  "KKresuktsWarm_mode.csv")
 
-# Add a pathway column and combine all into a single dataframe
-all_pathways_df <- do.call(rbind, lapply(names(pathway_conditions), function(pathway) {
-  if (!is.null(pathway_conditions[[pathway]])) {
-    df <- pathway_conditions[[pathway]]
-    df$pathway <- pathway  # Add the pathway name as a new column
-    return(df)
-  }
-}))
 
-# Save the combined dataframe to a CSV file
-write.csv(all_pathways_df, file = "AllPath.csv")
+####Plotting
+filtered_data2 <- data2 %>%
+  filter(pvalue < 0.05)  # Adjust this value based on your desired threshold
 
-# Remove 'pathway' and 'category' columns
-all_pathways_df$pathway <- NULL
+plot_data2 <- filtered_data2 
 
-# Add 'category' and "pathway" column from Pathways_cate
-all_pathways_df$pathway <- Pathways_cate$pathway
-all_pathways_df$category <- Pathways_cate$category
+# Remove the repetitive part from the Description
+plot_data2 <- plot_data2 %>%
+  mutate(Description = gsub(" - Argiope bruennichi \\(wasp spider\\)", "", Description))
 
-# Clean row names directly in the matrix
-rownames(all_pathways_df) <- gsub(" - Argiope bruennichi \\(wasp spider\\)", "", rownames(all_pathways_df))
+### Dot plot #########
+ggplot(plot_data2, aes(x = reorder(Description, pvalue), y = -log10(pvalue))) +
+  geom_point(aes(size = Count, color = pvalue), alpha = 0.6) +
+  labs(x = "Pathway Description", y = "-log10(P-value)", title = "KEGG Pathway Enrichment Analysis Warm",
+       subtitle = "Size of points corresponds to number of genes in the pathway") +
+  scale_color_gradient(low = "green", high = "red") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        plot.title = element_text(size = 14, face = "bold"),
+        plot.subtitle = element_text(size = 12)) +
+  guides(size = guide_legend(title = "Gene Count"))
 
-# Print cleaned row names for verification
-cat("Cleaned Row Names:\n")
-print(rownames(heatmap_data))
 
-###to plot
-# Libraries loading
-library(ComplexHeatmap)
-library(dplyr)
-library(tidyr)
-library(tibble)  # For column_to_rownames
-library(circlize)  # For colorRamp2
+###Bar plot #####
+ggplot(plot_data2, aes(x = reorder(Description, Count), y = Count, fill = category)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black",size = 0.5)+
+  coord_flip() +  # Horizontal bars
+  labs(x = NULL, 
+       y = "Number of DEGs in each pathway", 
+       title = "") +
+  geom_text(aes(label = Count), hjust = -0.2, size = 5) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 12, color = "black",face = "bold"),
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.line.y = element_blank(),  # Remove Y-axis line
+        axis.ticks.y = element_blank(),  # Remove Y-axis ticks (optional)
+        legend.position = "right",
+        legend.title = element_blank(),
+        plot.margin = margin(5, 10, 5, 5)) +
+  scale_fill_manual(values = c("Metabolism" = "#1A5555", 
+                               "Genetic Information Processing" = "green",
+                               "Cellular Processes" = "#00FFFF")) +
+  scale_y_continuous(
+    limits = c(0, 30),        # Hard stop at 0 and 6
+    expand = c(0, 0),        # No padding
+    breaks = seq(0, 30, by = 5)            # Explicit breaks at every integer
+  )
 
-# Aggregate data by pathway and condition
-pathway_summary <- all_pathways_df %>%
-  group_by(pathway, condition) %>%
-  summarise(mean_logFC = mean(logFC, na.rm = TRUE), .groups = 'drop')
+#######Warm vs Cold DEGs (df_sigs3)############
 
-# Prepare the heatmap data
-heatmap_data <- pathway_summary %>%
-  pivot_wider(names_from = condition, values_from = mean_logFC) %>%
-  column_to_rownames("pathway") %>%
-  as.matrix()
+####data (DGE)
+# Function to strip 'LOC' prefix from IDs
+strip_loc_prefix <- function(ids) {
+  return(sub("LOC", "", ids))
+}
 
-# Calculate variance and select top 40 pathways
-variances <- apply(heatmap_data, 1, var)
-top_pathways <- names(sort(variances, decreasing = TRUE))[1:40]
-heatmap_data_top <- heatmap_data[top_pathways, ]
+df_sigs3 <- as_tibble(df_sigs3, rownames = "ID")
 
-# Define color map and annotations
-color_map <- colorRamp2(c(-1.5, 0, 1.5), c("blue", "white", "red"))
-categories <- sample(c("Metabolism", "Cellular Processes", "Signaling", "Processing"), size = nrow(heatmap_data_top), replace = TRUE)
-category_colors <- c("Metabolism" = "blue", "Cellular Processes" = "pink", "Signaling" = "yellow", "Processing" ="purple")
-row_annotation <- HeatmapAnnotation(category = factor(categories),
-                                    col = list(category = category_colors),
-                                    which = "row",
-                                    show_legend = TRUE)
+# Strip 'LOC' prefix from gene IDs in the results
+df_sigs3$ID <- strip_loc_prefix(df_sigs3$ID )
 
-# Generate and draw the heatmap
-heatmap_top40 <- Heatmap(heatmap_data_top,
-                         name = "log2FC",
-                         row_title = "",
-                         column_title = "",
-                         right_annotation = row_annotation,
-                         cluster_rows = TRUE,
-                         cluster_columns = TRUE,
-                         show_row_names = TRUE,
-                         show_column_names = TRUE,
-                         clustering_distance_rows = "euclidean",
-                         clustering_distance_columns = "euclidean",
-                         clustering_method_rows = "complete",
-                         clustering_method_columns = "complete",
-                         row_dend_reorder = TRUE,
-                         column_dend_reorder = TRUE,
-                         col = color_map,
-                         show_heatmap_legend = TRUE,
-                         row_names_gp = gpar(fontsize = 10), # Adjust font size as needed
-                         heatmap_width = unit(20, "cm"), # Adjust width as necessary
-                         heatmap_height = unit(20, "cm"), # Adjust height as necessary
-                         ) 
+#gene list 
+gene_ids3 <- unique(unlist(df_sigs3))
+head(gene_ids3)
 
-draw(heatmap_top40)
+# Perform KEGG enrichment analysis
 
-draw(heatmap_top40, heatmap_legend_side = "left", annotation_legend_side = "bottom")
+kk3 <- enrichKEGG(gene = gene_ids3,
+                  organism = 'abru',
+                  keyType = "kegg",
+                  pvalueCutoff = 0.05,
+                  pAdjustMethod = "BH",
+                  qvalueCutoff = 0.1)
+
+# Check the structure of kk again to see if there are any anomalies
+str(kk3@result)
+
+# Convert relevant columns to numeric 
+kk3@result$GeneRatioCount <- as.numeric(sapply(strsplit(kk3@result$GeneRatio, "/"), `[`, 1))
+kk3@result$BgRatioCount <- as.numeric(sapply(strsplit(kk3@result$BgRatio, "/"), `[`, 1))
+
+# only kk@result as a data frame 
+data3 <- as.data.frame(kk3@result)
+
+write.csv(data3, file =  "KKresuktsWarm_Cold.csv")
+
+#data3 <- read.csv("KKresuktsWarm_Cold.csv", header = T)
+
+####Plotting
+filtered_data3 <- data3 %>%
+  filter(pvalue < 0.05)  # Adjust this value based on your desired threshold
+
+plot_data3 <- filtered_data3 
+
+# Remove the repetitive part from the Description
+plot_data3 <- plot_data3 %>%
+  mutate(Description = gsub(" - Argiope bruennichi \\(wasp spider\\)", "", Description))
+
+#filtered by 
+top_data3 <- data3 %>% 
+  arrange(pvalue) %>%  # Sort by pvalue to get the most significant results
+  head(20)  # Select the top 20
+
+plot_data33 <- top_data3 
+
+# Remove the repetitive part from the Description
+plot_data33 <- plot_data33 %>%
+  mutate(Description = gsub(" - Argiope bruennichi \\(wasp spider\\)", "", Description))
+
+### Dot plot #########
+ggplot(plot_data33, aes(x = reorder(Description, pvalue), y = -log10(pvalue))) +
+  geom_point(aes(size = Count, color = pvalue), alpha = 0.6) +
+  labs(x = "Pathway Description", y = "-log10(P-value)", title = "KEGG Pathway Enrichment Analysis WarmvsCold",
+       subtitle = "Size of points corresponds to number of genes in the pathway") +
+  scale_color_gradient(low = "green", high = "red") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        plot.title = element_text(size = 14, face = "bold"),
+        plot.subtitle = element_text(size = 12)) +
+  guides(size = guide_legend(title = "Gene Count"))
+
+
+###Bar plot #####
+ggplot(plot_data3, aes(x = reorder(Description, Count), y = Count, fill = category)) +
+  geom_bar(stat = "identity", width = 0.4, color = "black",size = 0.5)+
+  coord_flip() +  # Horizontal bars
+  labs(x = NULL, 
+       y = "Number of DEGs in each pathway", 
+       title = "") +
+  geom_text(aes(label = Count), hjust = -0.2, size = 5) +
+  theme_classic() +
+  theme(axis.text.y = element_text(size = 12, color = "black",face = "bold"),
+        axis.text.x = element_text(size = 14, color = "black"),
+        axis.line.y = element_blank(),  # Remove Y-axis line
+        axis.ticks.y = element_blank(),  # Remove Y-axis ticks (optional)
+        legend.position = "right",
+        legend.title = element_blank(),
+        plot.margin = margin(5, 10, 5, 5)) +
+  scale_fill_manual(values = c("Metabolism" = "#1A5555", 
+                               "Genetic Information Processing" = "green",
+                               "Cellular Processes" = "#00FFFF",
+                               "Environmental Information Processing" = "purple",
+                               "Signaling" ="darkorange")) +
+  scale_y_continuous(
+    limits = c(0, 30),        # Hard stop at 0 and 6
+    expand = c(0, 0),        # No padding
+    breaks = seq(0, 30, by = 5)              # Explicit breaks at every integer
+  )
+
+
+# Update row 5 specifically
+plot_data3[5, "category"] <- "Cellular Processes"
+plot_data3[5, "subcategory"] <- "Cell motility"
+
+# Verify the change
+plot_data33[20,"category"] <- "Cellular Processes"
+plot_data33[20, "subcategory"] <- "Transport and catabolism"
 
