@@ -29,7 +29,10 @@ survall$survivalrate_adj <- pmin(pmax(survall$survivalrate, 0.001), 0.999)
 
 # Applying a logit transformation to the adjusted survival rates
 survall$logit_survivalrate <- log(survall$survivalrate_adj / (1 - survall$survivalrate_adj))
+
 shapiro.test(survall$logit_survivalrate)
+#not normal
+leveneTest(survivalrate ~ Treatment, data = survall)
 
 #GLMM model 
 
@@ -46,7 +49,7 @@ Tweedie_model<-glmmTMB(logit_survivalrate ~ Opening + Treatment + scale(Age) + s
                        family = tweedie(), 
                        data = survall)
 
-AIC(TMBmodelS, Tweedie_model)  # If you ran a comparison
+AIC(TMBmodelS, Tweedie_model, Eggs, Poly, Age)  # ran a comparison
 
 
 Eggs<- glmmTMB(survivalrate ~ Opening + Treatment + scale(clutchsize), 
