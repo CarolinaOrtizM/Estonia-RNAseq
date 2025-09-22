@@ -37,6 +37,10 @@ Fatt$Fatpercentage <- Fatt$Fatpercentage/ 100
 Fatt$dryweight
 Fatt$Age
 
+shapiro.test(Fatt$Fatpercentage)
+#not normal
+leveneTest(Fatpercentage ~ Treatment, data = Fatt)
+
 #GLMM 
 model <- glmmTMB(Fatpercentage ~ Treatment + Opening + dryweight + scale(Age) + (1|ID),
                   data = Fatt,
