@@ -51,10 +51,11 @@ SFA <- ggplot(FA, aes(x = TREAT, y = SFA, fill= TREAT)) +
   )
 SFA
 
-#anova
 shapiro.test(FA$SFA)
+leveneTest(FA$SFA~ FA$TREAT)
+
+#anova
 SFAnova <- aov(FA$SFA ~ FA$TREAT) 
-kruskal.test(FA$SFA~ FA$TREAT)
 print(SFAnova)
 summary(SFAnova)
 
@@ -103,7 +104,8 @@ MUFA
 
 #anova
 shapiro.test(FA$MUFA)
-kruskal.test(FA$MUFA ~ FA$TREAT)
+leveneTest(FA$MUFA~ FA$TREAT)
+
 MUFAnova <- aov(FA$MUFA ~ FA$TREAT) 
 print(MUFAnova)
 summary(MUFAnova)
@@ -156,6 +158,7 @@ Omega3
 
 #anova
 shapiro.test(FA$n.3_PUFA) #not normal 
+leveneTest(FA$n.3_PUFA~ FA$TREAT)
 kruskal.test(FA$n.3_PUFA ~ FA$TREAT)
 
 # Log transformation (add a small constant if there are zeros to avoid -Inf)
